@@ -1,9 +1,12 @@
 import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { AccountFormComponent } from "./features/account/account-form/account-form";
+import { HeaderComponent } from "./header-component/header-component";
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+   standalone: true,
+  imports: [RouterOutlet, AccountFormComponent, HeaderComponent],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
