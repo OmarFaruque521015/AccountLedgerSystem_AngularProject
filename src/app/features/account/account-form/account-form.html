@@ -1,90 +1,81 @@
-<div class="container d-flex justify-content-center align-items-center min-vh-100 py-4">
-  <div class="card shadow-lg p-4 w-100" style="max-width: 600px;">
-    <h2 class="text-center mb-4">Create Account</h2>
+<div class="row g-0">
+  <div class="card">
+    <div class="card-header">
+      Account List
 
-    <form [formGroup]="accountForm" (ngSubmit)="onSubmit()">
-      <div class="mb-3">
-        <label for="name" class="form-label">Name</label>
-        <input
-          type="text"
-          id="name"
-          formControlName="name"
-          class="form-control"
-          placeholder="Enter account name"
-        />
-        <div *ngIf="accountForm.get('name')?.invalid && accountForm.get('name')?.touched" class="text-danger">
-          Name is required.
-        </div>
-      </div>
+      <button type="button" (click)="addAccount()" class="btn btn-primary float-end"> Add </button>
+    </div>
+    <div class="card-body">
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Sl.</th>
+            <th scope="col">Name</th>
+            <th scope="col">Type</th>
+            <th scope="col">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let account of accounts">
+            <th scope="row">1</th>
+            <td>{{account.name}}</td>
+            <td>{{account.type}}</td>
+            <td>
+                    <button type="button" (click)="EditAccount(account)" class="btn btn-primary mx-1 "> Edit </button>
+                    <button type="button" (click)="RemoveAccount(account)" class="btn btn-primary mx-1"> Delete </button>
 
-      <div class="mb-3">
-        <label for="type" class="form-label">Type</label>
-        <input
-          type="text"
-          id="type"
-          formControlName="type"
-          class="form-control"
-          placeholder="Enter account type"
-        />
-        <div *ngIf="accountForm.get('type')?.invalid && accountForm.get('type')?.touched" class="text-danger">
-          Type is required.
-        </div>
-      </div>
+            </td>
+          </tr>
 
-      <div class="text-center">
-        <button type="submit" class="btn btn-primary px-4" [disabled]="accountForm.invalid">Submit</button>
-      </div>
-    </form>
+        </tbody>
+      </table>
+    </div>
   </div>
+</div>
 
-  <!-- Account List -->
-  <div class="card shadow p-4 w-100 mt-4" style="max-width: 600px;">
-    <h3 class="mb-3">All Accounts</h3>
-    <table class="table table-striped">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Name</th>
-          <th>Type</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let account of paginatedAccounts">
-          <td>{{ account.id }}</td>  <!-- ✅ Use lowercase 'id' if your model defines it as such -->
-          <td>{{ account.name }}</td>
-          <td>{{ account.type }}</td>
-        </tr>
-        <tr *ngIf="accounts.length === 0">
-          <td colspan="3" class="text-center">No accounts found.</td>
-        </tr>
-      </tbody>
-    </table>
 
-    <nav *ngIf="totalPages > 1" class="mt-3" aria-label="Page navigation">
-  <ul class="pagination justify-content-center">
-    <li class="page-item" [class.disabled]="currentPage === 1">
-      <button class="page-link" (click)="changePage(currentPage - 1)" aria-label="Previous">
-        &laquo;
-      </button>
-    </li>
 
-    <li
-      *ngFor="let page of [].constructor(totalPages); let i = index"
-      class="page-item"
-      [class.active]="currentPage === i + 1"
-    >
-      <button class="page-link" (click)="changePage(i + 1)">
-        {{ i + 1 }}
-      </button>
-    </li>
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" hidden id="openmodal" data-bs-toggle="modal"
+  data-bs-target="#exampleModal">
+  Launch demo modal
+</button>
 
-    <li class="page-item" [class.disabled]="currentPage === totalPages">
-      <button class="page-link" (click)="changePage(currentPage + 1)" aria-label="Next">
-        &raquo;
-      </button>
-    </li>
-  </ul>
-</nav>
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" id="closeModdal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
 
+        <div class="mb-3">
+          <label for="name" class="form-label">Name</label>
+          <input type="text" id="name" [(ngModel)]="oAccount.name" name="name" class="form-control"
+            placeholder="Enter account name" />
+
+        </div>
+
+        <div class="mb-3">
+          <label for="type" class="form-label">Type</label>
+          <input type="text" id="type" [(ngModel)]="oAccount.type" name="type" class="form-control"
+            placeholder="Enter account name" />
+
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        @if (oAccount.id==0) {
+        <button type="button" class="btn btn-primary" (click)="InsertAccount()">Add </button>
+        }@else {
+        <button type="button" class="btn btn-primary" (click)="UpdateAccount()">Update </button>
+        }
+
+
+      </div>
+    </div>
   </div>
 </div>

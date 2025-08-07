@@ -1,24 +1,24 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AccountService } from '../../../../core/services/account.service';
 import { ToastrService } from 'ngx-toastr';
-import { account } from '../../../../shared/models/account.model';
+import { Account, account } from '../../../../shared/models/account.model';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-account-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, RouterModule, ReactiveFormsModule],
   templateUrl: './account-form.html',
 })
 export class AccountFormComponent implements OnInit {
   accountForm: FormGroup;
   accounts: account[] = [];
-   paginatedAccounts: account[] = [];
-  currentPage: number = 1;
-  pageSize: number = 10;
-  totalPages: number = 0;
-  
+  accountId: number = 0;
+
+  public oAccount = new Account();
+
   constructor(
     private fb: FormBuilder,
     private accountService: AccountService,
@@ -33,57 +33,95 @@ export class AccountFormComponent implements OnInit {
     this.LoadAccounts();
   }
 
-  onSubmit() {
-    if (this.accountForm.valid) {
-      this.accountService.createAccount(this.accountForm.value).subscribe({
-        next: () => {
-          this.toastr.success('Account created!');
-          this.accountForm.reset();
+  EditAccount(account: any) {
+    this.oAccount = new Account();
+    this.oAccount.id = Number(account.id);
+    this.oAccount.name = account.name;
+    this.oAccount.type = account.type;
+
+    document.getElementById("openmodal")?.click();
+  }
+
+  RemoveAccount(account: any) {
+    debugger
+    this.oAccount = new Account();
+    this.oAccount.id = Number(account.id)
+
+    if (confirm(`Are you sure want to delete account:${account.name}`)) {
+      this.accountService.RemoveAccount(this.oAccount.id).subscribe({
+        next: (res) => {
+          console.log('Account deleted successfully!');
+          this.toastr.success('Deleted data successfully!');
+          document.getElementById("closeModdal")?.click();
+          this.oAccount = new Account();
           this.LoadAccounts();
-        },
-        error: () => {
-          this.toastr.error('Failed to create account.');
-        },
-      });
-    } else {
-      this.toastr.warning('Please fill out all required fields.');
+        }
+      })
     }
   }
 
-  // LoadAccounts() {
-  //   this.accountService.getAccounts().subscribe({
-  //     next: (data) => {
-  //       this.accounts=data;
-  //     },
-  //     error:()=>{
-  //       this.toastr.error('There is no Data found!');
-  //     }
-  //   })
-  // }
+  UpdateAccount() {
+    debugger
+    this.accountService.updateAccount(Number(this.oAccount.id), this.oAccount).subscribe({
+      next: (res) => {
+        console.log('Update successful', res);
+        this.toastr.success('Account Updated successfully!');
+        document.getElementById("closeModdal")?.click();
+        this.oAccount = new Account();
+        this.LoadAccounts();
+      },
+      error: (err) => {
+        console.error('Update failed', err);
+        this.toastr.error('Failed to create account.');
+      },
+    });
+  }
+
+  InsertAccount() {
+    debugger
+    this.accountService.createAccount(this.oAccount).subscribe({
+      next: () => {
+        this.toastr.success('Account created!');
+        document.getElementById("closeModdal")?.click();
+        this.oAccount = new Account();
+        this.LoadAccounts();
+      },
+      error: () => {
+        this.toastr.error('Failed to create account.');
+      },
+    });
+  }
+
+  DeleteAccount() {
+    debugger
+    this.accountService.createAccount(this.oAccount).subscribe({
+      next: () => {
+        debugger
+        this.toastr.success('Account created!');
+        document.getElementById("closeModdal")?.click();
+        this.oAccount = new Account();
+        this.LoadAccounts();
+      },
+      error: () => {
+        this.toastr.error('Failed to create account.');
+      },
+    });
+  }
+
+  addAccount() {
+    document.getElementById("openmodal")?.click();
+  }
 
   LoadAccounts() {
     this.accountService.getAccounts().subscribe({
       next: (data) => {
         this.accounts = data;
-        this.totalPages = Math.ceil(this.accounts.length / this.pageSize);
-        this.setPaginatedData();
       },
       error: () => {
-        this.toastr.error('Failed to load accounts');
-      },
-    });
+        this.toastr.error('There is no Data found!');
+      }
+    })
   }
 
-  setPaginatedData() {
-    const startIndex = (this.currentPage - 1) * this.pageSize;
-    const endIndex = startIndex + this.pageSize;
-    this.paginatedAccounts = this.accounts.slice(startIndex, endIndex);
-  }
 
-  changePage(page: number) {
-    if (page >= 1 && page <= this.totalPages) {
-      this.currentPage = page;
-      this.setPaginatedData();
-    }
-  }
 }

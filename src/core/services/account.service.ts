@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { environment } from "../../environments/environment";
 import { HttpClient } from "@angular/common/http";
-import { account } from "../../shared/models/account.model";
+import { Account, account } from "../../shared/models/account.model";
 import { Observable } from "rxjs";
 
 @Injectable({
@@ -20,4 +20,12 @@ export class AccountService {
     getAccounts(): Observable<any[]> {
         return this.http.get<any[]>(`${this.baseUrl}/get`);
     } 
+
+    updateAccount(id:number,account:any):Observable<any>{
+        return this.http.put(`${this.baseUrl}/update/${id}`,account)
+    }
+
+    RemoveAccount(id:number):Observable<any>{
+        return this.http.delete(`${this.baseUrl}/delete/${id}`)
+    }
 }

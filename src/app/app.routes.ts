@@ -3,5 +3,6 @@ import { AccountFormComponent } from './features/account/account-form/account-fo
 
 export const routes: Routes = [
   { path: '', redirectTo: 'account', pathMatch: 'full' },
-  { path: 'account', component: AccountFormComponent }
+  { path: 'account', component: AccountFormComponent },
+  // { path: 'JournalEntry', component: AccountFormComponent }
 ];
