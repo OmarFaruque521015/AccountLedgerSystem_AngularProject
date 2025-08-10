@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { AccountService } from '../../../../core/services/account.service';
 import { ToastrService } from 'ngx-toastr';
 import { Account, account } from '../../../../shared/models/account.model';
 import { RouterModule } from '@angular/router';
+import { AccountLSService } from '../../../../core/services/accountJS.service';
 
 @Component({
   selector: 'app-account-form',
@@ -21,7 +21,7 @@ export class AccountFormComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private accountService: AccountService,
+    private accountService: AccountLSService,
     private toastr: ToastrService
   ) {
     this.accountForm = this.fb.group({
@@ -62,7 +62,7 @@ export class AccountFormComponent implements OnInit {
 
   UpdateAccount() {
     debugger
-    this.accountService.updateAccount(Number(this.oAccount.id), this.oAccount).subscribe({
+    this.accountService.updateAccount("Account/update",Number(this.oAccount.id), this.oAccount).subscribe({
       next: (res) => {
         console.log('Update successful', res);
         this.toastr.success('Account Updated successfully!');
@@ -79,32 +79,38 @@ export class AccountFormComponent implements OnInit {
 
   InsertAccount() {
     debugger
-    this.accountService.createAccount(this.oAccount).subscribe({
+    this.accountService.Post("/account/create", this.oAccount).subscribe({
       next: () => {
         this.toastr.success('Account created!');
         document.getElementById("closeModdal")?.click();
         this.oAccount = new Account();
         this.LoadAccounts();
       },
-      error: () => {
-        this.toastr.error('Failed to create account.');
+      error: (err) => {
+        debugger
+        // this.toastr.error('Failed to create account.');
+        const errorMsg = err.error?.error || 'Account already exists.';
+        this.toastr.error(errorMsg, 'Error');
       },
     });
   }
 
   DeleteAccount() {
     debugger
-    this.accountService.createAccount(this.oAccount).subscribe({
+    if (!this.oAccount?.id) { // or whatever your primary key field is
+      this.toastr.warning('No account selected to delete.');
+      return;
+    }
+    this.accountService.RemoveAccount(this.oAccount.id).subscribe({
       next: () => {
-        debugger
-        this.toastr.success('Account created!');
-        document.getElementById("closeModdal")?.click();
+        this.toastr.success('Account deleted successfully!');
+        document.getElementById("closeModal")?.click();
         this.oAccount = new Account();
         this.LoadAccounts();
       },
       error: () => {
-        this.toastr.error('Failed to create account.');
-      },
+        this.toastr.error('Failed to delete account.');
+      }
     });
   }
 
@@ -113,8 +119,9 @@ export class AccountFormComponent implements OnInit {
   }
 
   LoadAccounts() {
-    this.accountService.getAccounts().subscribe({
-      next: (data) => {
+    this.accountService.getAllData("/account/get").subscribe({
+      next: (data: any) => {
+        debugger
         this.accounts = data;
       },
       error: () => {

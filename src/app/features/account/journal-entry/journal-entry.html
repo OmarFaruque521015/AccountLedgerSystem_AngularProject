@@ -10,22 +10,21 @@
         <thead>
           <tr>
             <th scope="col">Sl.</th>
-            <th scope="col">Name</th>
-            <th scope="col">Type</th>
+            <th scope="col">Date</th>
+            <th scope="col">Description</th>
             <th scope="col">Action</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let account of accounts; let i = index">
+          <tr *ngFor="let journalEntry of journalEntries; let i = index">
             <th scope="row">{{ i + 1 }}</th>
-            <td>{{ account.name }}</td>
-            <td>{{ account.type }}</td>
+            <td>{{ journalEntry.date }}</td>
+            <td>{{ journalEntry.description }}</td>
             <td>
-              <button type="button" (click)="EditAccount(account)" class="btn btn-primary mx-1">Edit</button>
-              <button type="button" (click)="RemoveAccount(account)" class="btn btn-danger mx-1">Delete</button>
+              <button type="button" (click)="EditJournalEntries(journalEntry)" class="btn btn-primary mx-1">Edit</button>
+              <button type="button" (click)="RemoveJournalEntries(journalEntry)" class="btn btn-danger mx-1">Delete</button>
             </td>
           </tr>
-
         </tbody>
       </table>
     </div>
@@ -37,7 +36,7 @@
 <!-- Button trigger modal -->
 <button type="button" class="btn btn-primary" hidden id="openmodal" data-bs-toggle="modal"
   data-bs-target="#exampleModal">
-  Add Account
+  Add Account Journal
 </button>
 
 <!-- Modal -->
@@ -45,32 +44,32 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Create Account Journal</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" id="closeModdal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
 
         <div class="mb-3">
-          <label for="name" class="form-label">Name</label>
-          <input type="text" id="name" [(ngModel)]="oAccount.name" name="name" class="form-control"
-            placeholder="Enter account name" />
+          <label for="date" class="form-label">Date</label>
+          <input type="date" id="date" [(ngModel)]="oJournalEntry.date" name="date" class="form-control"
+            placeholder="Enter journal Entry Date" />
 
         </div>
 
         <div class="mb-3">
           <label for="type" class="form-label">Type</label>
-          <input type="text" id="type" [(ngModel)]="oAccount.type" name="type" class="form-control"
-            placeholder="Enter account name" />
+          <input type="text" id="type" [(ngModel)]="oJournalEntry.description" name="type" class="form-control"
+            placeholder="Enter journal Entry name" />
 
         </div>
 
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        @if (oAccount.id==0) {
-        <button type="button" class="btn btn-primary" (click)="InsertAccount()">Add </button>
+        @if (oJournalEntry.id==0) {
+        <button type="button" class="btn btn-primary" (click)="InsertJournalEntry()">Add </button>
         }@else {
-        <button type="button" class="btn btn-primary" (click)="UpdateAccount()">Update </button>
+        <button type="button" class="btn btn-primary" (click)="UpdateJournalEntry()">Update </button>
         }
 
 
