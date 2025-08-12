@@ -46,7 +46,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" id="closeModdal" aria-label="Close"></button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" id="closeModdal" (click)="resetForm()" aria-label="Close"></button>
       </div>
       <div class="modal-body">
 
@@ -59,14 +59,15 @@
 
         <div class="mb-3">
           <label for="type" class="form-label">Type</label>
-          <input type="text" id="type" [(ngModel)]="oAccount.type" name="type" class="form-control"
-            placeholder="Enter account name" />
-
+          <select id="type" [(ngModel)]="oAccount.type" name="type" class="form-control">
+            <option [ngValue]="null" disabled>Select an Account Type</option>
+            <option *ngFor="let type of accountTypes" [ngValue]="type">{{type}}</option>
+          </select> 
         </div>
 
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="resetForm()">Close</button>
         @if (oAccount.id==0) {
         <button type="button" class="btn btn-primary" (click)="InsertAccount()">Add </button>
         }@else {

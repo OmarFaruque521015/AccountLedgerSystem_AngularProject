@@ -27,7 +27,7 @@
 
 export class JournalEntry {
     id: number;
-    date: Date;
+    date: any;
     description: string;
     constructor() {
         this.id = 0;
@@ -35,3 +35,4 @@ export class JournalEntry {
         this.description = "";
     }
 }
+

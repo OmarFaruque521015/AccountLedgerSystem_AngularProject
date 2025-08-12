@@ -5,6 +5,7 @@ import { ToastrService } from 'ngx-toastr';
 import { Account, account } from '../../../../shared/models/account.model';
 import { RouterModule } from '@angular/router';
 import { AccountLSService } from '../../../../core/services/accountJS.service';
+import { AccountType } from '../../../../core/services/account-types.enum';
 
 @Component({
   selector: 'app-account-form',
@@ -18,6 +19,10 @@ export class AccountFormComponent implements OnInit {
   accountId: number = 0;
 
   public oAccount = new Account();
+  accountTypes = Object.values(AccountType);
+  resetForm() {
+    this.oAccount = new Account();
+  }
 
   constructor(
     private fb: FormBuilder,
@@ -43,12 +48,13 @@ export class AccountFormComponent implements OnInit {
   }
 
   RemoveAccount(account: any) {
-    debugger
     this.oAccount = new Account();
     this.oAccount.id = Number(account.id)
 
     if (confirm(`Are you sure want to delete account:${account.name}`)) {
-      this.accountService.RemoveAccount(this.oAccount.id).subscribe({
+      debugger
+
+      this.accountService.Remove("/Account/delete/", this.oAccount.id).subscribe({
         next: (res) => {
           console.log('Account deleted successfully!');
           this.toastr.success('Deleted data successfully!');
@@ -62,7 +68,7 @@ export class AccountFormComponent implements OnInit {
 
   UpdateAccount() {
     debugger
-    this.accountService.updateAccount("Account/update",Number(this.oAccount.id), this.oAccount).subscribe({
+    this.accountService.Post("/Account/update/" + Number(this.oAccount.id), this.oAccount).subscribe({
       next: (res) => {
         console.log('Update successful', res);
         this.toastr.success('Account Updated successfully!');
@@ -89,28 +95,9 @@ export class AccountFormComponent implements OnInit {
       error: (err) => {
         debugger
         // this.toastr.error('Failed to create account.');
-        const errorMsg = err.error?.error || 'Account already exists.';
+        const errorMsg = err.error?.error || 'Type is not correct';
         this.toastr.error(errorMsg, 'Error');
       },
-    });
-  }
-
-  DeleteAccount() {
-    debugger
-    if (!this.oAccount?.id) { // or whatever your primary key field is
-      this.toastr.warning('No account selected to delete.');
-      return;
-    }
-    this.accountService.RemoveAccount(this.oAccount.id).subscribe({
-      next: () => {
-        this.toastr.success('Account deleted successfully!');
-        document.getElementById("closeModal")?.click();
-        this.oAccount = new Account();
-        this.LoadAccounts();
-      },
-      error: () => {
-        this.toastr.error('Failed to delete account.');
-      }
     });
   }
 

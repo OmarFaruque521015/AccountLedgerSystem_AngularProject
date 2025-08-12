@@ -35,12 +35,12 @@
 
 <!-- Button trigger modal -->
 <button type="button" class="btn btn-primary" hidden id="openmodal" data-bs-toggle="modal"
-  data-bs-target="#exampleModal">
+  data-bs-target="#JEModal">
   Add Account Journal
 </button>
 
 <!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="JEModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -53,19 +53,18 @@
           <label for="date" class="form-label">Date</label>
           <input type="date" id="date" [(ngModel)]="oJournalEntry.date" name="date" class="form-control"
             placeholder="Enter journal Entry Date" />
-
-        </div>
-
+        </div> 
+        
         <div class="mb-3">
-          <label for="type" class="form-label">Type</label>
-          <input type="text" id="type" [(ngModel)]="oJournalEntry.description" name="type" class="form-control"
-            placeholder="Enter journal Entry name" />
+          <label for="type" class="form-label">Description</label>
+          <input type="text" id="description" [(ngModel)]="oJournalEntry.description" name="description" class="form-control"
+            placeholder="Enter journal Entry Description" />
 
         </div>
 
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="resetForm()">Close</button>
         @if (oJournalEntry.id==0) {
         <button type="button" class="btn btn-primary" (click)="InsertJournalEntry()">Add </button>
         }@else {

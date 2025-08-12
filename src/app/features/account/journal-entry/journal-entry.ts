@@ -18,7 +18,10 @@ export class JournalEntryComponent implements OnInit {
   journalEntries: JournalEntry[] = [];
 
   public oJournalEntry = new JournalEntry();
-
+  resetForm() {
+    this.oJournalEntry = new JournalEntry()
+  }
+  
   constructor(
     private fb: FormBuilder,
     private accountLSService: AccountLSService,
@@ -34,21 +37,22 @@ export class JournalEntryComponent implements OnInit {
     this.LoadJournalEntries();
   }
 
-  EditJournalEntries(account: any) {
+  EditJournalEntries(JE: any) {
     this.oJournalEntry = new JournalEntry();
-    this.oJournalEntry.id = Number(account.id);
-    this.oJournalEntry.date = account.date;
-    this.oJournalEntry.description = account.description;
+    this.oJournalEntry.id = Number(JE.id);
+    this.oJournalEntry.date = JE.date;
+    this.oJournalEntry.description = JE.description;
 
     document.getElementById("openmodal")?.click();
   }
 
-  RemoveJournalEntries(account: any) {
+  RemoveJournalEntries(JE: any) {
+    debugger
     this.oJournalEntry = new JournalEntry();
-    this.oJournalEntry.id = Number(account.id)
+    this.oJournalEntry.id = Number(JE.id)
 
-    if (confirm(`Are you sure want to delete account:${account.name}`)) {
-      this.accountLSService.RemoveAccount(this.oJournalEntry.id).subscribe({
+    if (confirm(`Are you sure want to delete account: ${JE.description}`)) {
+      this.accountLSService.Remove("/JournalEntry/delete/", Number(this.oJournalEntry.id)).subscribe({
         next: (res) => {
           console.log('Account Journal deleted successfully!');
           this.toastr.success('Deleted data successfully!');
@@ -99,41 +103,58 @@ export class JournalEntryComponent implements OnInit {
     });
   }
 
-  DeleteAccount() {
-    if (!this.oJournalEntry?.id) {
-      this.toastr.error('No account selected to delete.');
-      return;
-    }
-    this.accountLSService.RemoveAccount(this.oJournalEntry.id).subscribe({
-      next: () => {
-        this.toastr.success('Account deleted successfully!');
-        document.getElementById("closeModdal")?.click();
-        this.oJournalEntry = new JournalEntry();  // reset object
-        this.LoadJournalEntries();  // reload the account list
-      },
-      error: () => {
-        this.toastr.error('Failed to delete account.');
-      },
-    });
-  }
+  // DeleteAccount() {
+  //   if (!this.oJournalEntry?.id) {
+  //     this.toastr.error('No account selected to delete.');
+  //     return;
+  //   }
+  //   this.accountLSService.Remove(this.oJournalEntry.id).subscribe({
+  //     next: () => {
+  //       this.toastr.success('Account deleted successfully!');
+  //       document.getElementById("closeModdal")?.click();
+  //       this.oJournalEntry = new JournalEntry();  // reset object
+  //       this.LoadJournalEntries();  // reload the account list
+  //     },
+  //     error: () => {
+  //       this.toastr.error('Failed to delete account.');
+  //     },
+  //   });
+  // }
 
   addAccount() {
     document.getElementById("openmodal")?.click();
   }
 
-  LoadJournalEntries() {
+  // LoadJournalEntries() {
+  //   this.accountLSService.getAllData("/JournalEntry/getJournalEntry").subscribe({
+  //     next: (data: any) => {
+  //       // this.journalEntries = data;
+  //       this.journalEntries = data.map((entry: JournalEntry) => ({
+  //         ...entry,
+  //         date: new Date(entry.date).toISOString().split('T')[0]
+  //       }));
+  //     },
+  //     error: () => {
+  //       this.toastr.error('There is no Data found!');
+  //     }
+  //   })
+  // }
+
+  LoadJournalEntries(): void {
     this.accountLSService.getAllData("/JournalEntry/getJournalEntry").subscribe({
-      next: (data: any) => {
-        // this.journalEntries = data;
-        this.journalEntries = data.map((entry: JournalEntry) => ({
-          ...entry,
-          date: new Date(entry.date).toISOString().split('T')[0]
-        }));
+      next: (data: JournalEntry[]) => {
+        this.journalEntries = data.map((entry: JournalEntry) => {
+          const je = new JournalEntry();
+          je.id = entry.id;
+          je.description = entry.description;
+          je.date = this.datePipe.transform(new Date(entry.date), 'yyyy-MM-dd');
+          return je;
+        });
       },
       error: () => {
         this.toastr.error('There is no Data found!');
       }
-    })
+    });
   }
 
 

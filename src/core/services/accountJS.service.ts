@@ -12,9 +12,7 @@ export class AccountLSService {
 
     constructor(private http: HttpClient) { }
 
-    // createAccount(Account: account): Observable<any> {
-    //     return this.http.post(`${this.baseUrl}/create`, Account);
-    // }
+    
     Post(url: string, accountObj: any): Observable<any> {
         return this.http.post(`${this.baseUrl}${url}`, accountObj);
     }
@@ -23,13 +21,13 @@ export class AccountLSService {
         return this.http.get<any[]>(`${this.baseUrl}${url}`);
     }
 
-    updateAccount(url: string, id: number, accountObj: any): Observable<any> {
+    update(url: string, id: number, accountObj: any): Observable<any> {
         debugger
-        return this.http.put(`${this.baseUrl}${url}/${id}`, accountObj)
+        return this.http.put(`${this.baseUrl}${url}${id}`, accountObj)
         // return this.http.put(`${this.baseUrl}/update/${id}`, account)
     }
 
-    RemoveAccount(id: number): Observable<any> {
-        return this.http.delete(`${this.baseUrl}/delete/${id}`)
+    Remove(url: string, id: number): Observable<any> {
+        return this.http.delete(`${this.baseUrl}${url}${id}`)
     }
 }
